@@ -1,0 +1,28 @@
+const AWS = require('aws-sdk');
+
+exports.handler = async (event) => {
+  const { id, price } = JSON.parse(event.body);
+
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+  const params = {
+    TableName: 'Items',
+    Item: {
+      id,
+      price
+    }
+  };
+
+  try {
+    await dynamodb.put(params).promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Item inserido com sucesso' })
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Erro ao inserir o item', error })
+    };
+  }
+};
